@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Pelko Timer</title>
+	<style>
+		#all {
+			width: 800px;
+			margin: 1em auto;
+			text-align: center;
+		}
+		#container {
+			border: 1px solid black;
+			background-color: #882222;
+			width: 500px;
+			color: white;
+			margin: 0 auto;
+			padding: 2em 0;
+		}
+	</style>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script>
+		(function() {
+			var STATE_RUNNING_RUN = 0;
+			var STATE_RUNNING_BREAK = 1;
+			var STATE_WAIT_TO_RUN = 2;
+			var STATE_WAIT_TO_BREAK = 4;
+
+			var currentState = STATE_WAIT_TO_RUN;
+
+			var baseTime = 300000; //5 min
+			var times = [
+				baseTime, //5 min
+				baseTime * 2, //10 min
+				baseTime * 3, //15 min
+				baseTime * 4, //20 min
+				baseTime * 5 //25 min
+			];
+
+			var timeout;
+
+			function updateButtonText(str) {
+				$("#start").text(str);
+			}
+
+			var blatt = new Audio("http://themushroomkingdom.net/sounds/wav/mparty8/mparty8_bowser_01.wav");
+			var ding = new Audio("http://themushroomkingdom.net/sounds/wav/mparty8/mparty8_dk_03.wav");
+
+			function playSound(sound) {
+				sound.play();
+			}
+
+			function updateTimerText(str) {
+				$("#timer").text(str);
+			}
+
+			function handleStateChange(click) {
+				var newTimer;
+				switch (currentState) {
+					case STATE_RUNNING_RUN:
+						currentState = STATE_WAIT_TO_BREAK;
+						clearTimeout(timeout);
+						updateButtonText("ALKAA RAUHA");
+						updateTimerText("Press the button to begin your break time. No cheating!");
+						if (!click) {
+							playSound(blatt);
+						}
+						break;
+					case STATE_RUNNING_BREAK:
+						currentState = STATE_WAIT_TO_RUN;
+						clearTimeout(timeout);
+						updateButtonText("ALKAA PELKO");
+						updateTimerText("Push the button to begin the next pelko round.");
+						if (!click) {
+							playSound(ding);
+						}
+						break;
+					case STATE_WAIT_TO_RUN:
+						currentState = STATE_RUNNING_RUN;
+						updateButtonText("PYSÄYTTÄÄ PELKO");
+						updateTimerText("WORK NOW GO GO GO GO GO GO");
+						newTimer = times[Math.floor(Math.random() * times.length)];
+						console.log(newTimer);
+						timeout = setTimeout(handleStateChange, newTimer);
+						break;
+					case STATE_WAIT_TO_BREAK:
+						currentState = STATE_RUNNING_BREAK;
+						updateButtonText("PALATA PELÄTÄ");
+						updateTimerText("You're on break! Have fun!");
+						newTimer = baseTime;
+						console.log(newTimer);
+						timeout = setTimeout(handleStateChange, newTimer);
+						break;
+				}
+			}
+
+			$(document).ready(function() {
+				$("#start").click(function() {
+					handleStateChange(true);
+				});
+			});
+		})();
+	</script>
+</head>
+<body>
+	<div id="all">
+		<h1>Pelko Timer</h1>
+		<p>Based on <a href="http://doublestealth.blogspot.co.uk/2014/07/the-pelko-method.html">The Pelko Method</a> invented by fictional CEO Brad Bradstone.</p>
+		<div id="container">
+			<p id="timer">Push the button - it will start your first pelko round.</p>
+			<button id="start">ALKAA PELKO</button>
+		</div>
+	</div>
+</body>
+</html>
