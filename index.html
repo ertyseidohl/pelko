@@ -80,7 +80,6 @@
 						updateButtonText("PYSÄYTTÄÄ PELKO");
 						updateTimerText("WORK NOW GO GO GO GO GO GO");
 						newTimer = times[Math.floor(Math.random() * times.length)];
-						console.log(newTimer);
 						timeout = setTimeout(handleStateChange, newTimer);
 						break;
 					case STATE_WAIT_TO_BREAK:
@@ -88,7 +87,6 @@
 						updateButtonText("PALATA PELÄTÄ");
 						updateTimerText("You're on break! Have fun!");
 						newTimer = baseTime;
-						console.log(newTimer);
 						timeout = setTimeout(handleStateChange, newTimer);
 						break;
 				}
